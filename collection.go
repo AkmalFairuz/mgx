@@ -362,6 +362,8 @@ func (c *Collection) DropIndexes(opts ...*DropIndexesOptions) *DropIndexesResult
 	}
 }
 
+// WithContext sets the context for the collection.
+// This context will be used for all operations on the collection.
 func (c *Collection) WithContext(ctx context.Context) *Collection {
 	c.ctx = ctx
 	return c
