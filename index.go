@@ -5,7 +5,7 @@ import "go.mongodb.org/mongo-driver/mongo"
 // IndexModel is a model for an index to create.
 type IndexModel struct {
 	// Keys is a document that contains the index keys and their corresponding sort order.
-	Keys interface{}
+	Keys any
 
 	Options *IndexOptions
 }

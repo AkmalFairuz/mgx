@@ -74,7 +74,7 @@ func (o *WatchOptions) FullDocumentBeforeChange(v FullDocument) *WatchOptions {
 }
 
 // ResumeAfter specifies the logical starting point for the new change stream.
-func (o *WatchOptions) ResumeAfter(v interface{}) *WatchOptions {
+func (o *WatchOptions) ResumeAfter(v any) *WatchOptions {
 	o.o.SetResumeAfter(v)
 	return o
 }
@@ -96,7 +96,7 @@ func (o *WatchOptions) StartAtOperationTime(v *Timestamp) *WatchOptions {
 }
 
 // StartAfter specifies the logical starting point for the new change stream.
-func (o *WatchOptions) StartAfter(v interface{}) *WatchOptions {
+func (o *WatchOptions) StartAfter(v any) *WatchOptions {
 	o.o.SetStartAfter(v)
 	return o
 }

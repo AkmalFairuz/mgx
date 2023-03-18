@@ -52,13 +52,13 @@ func (o *UpdateOptions) Comment(v string) *UpdateOptions {
 }
 
 // Hint specifies the index to use.  The default value is nil, which means that no hint will be sent.
-func (o *UpdateOptions) Hint(v interface{}) *UpdateOptions {
+func (o *UpdateOptions) Hint(v any) *UpdateOptions {
 	o.o.SetHint(v)
 	return o
 }
 
 // Let specifies variables accessible from the update expression.
-func (o *UpdateOptions) Let(v interface{}) *UpdateOptions {
+func (o *UpdateOptions) Let(v any) *UpdateOptions {
 	o.o.SetLet(v)
 	return o
 }

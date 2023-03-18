@@ -38,7 +38,7 @@ func (o *FindOneAndUpdateOptions) Collation(v Collation) *FindOneAndUpdateOption
 	return o
 }
 
-func (o *FindOneAndUpdateOptions) Comment(v interface{}) *FindOneAndUpdateOptions {
+func (o *FindOneAndUpdateOptions) Comment(v any) *FindOneAndUpdateOptions {
 	o.o.SetComment(v)
 	return o
 }
@@ -48,7 +48,7 @@ func (o *FindOneAndUpdateOptions) MaxTime(v time.Duration) *FindOneAndUpdateOpti
 	return o
 }
 
-func (o *FindOneAndUpdateOptions) Projection(v interface{}) *FindOneAndUpdateOptions {
+func (o *FindOneAndUpdateOptions) Projection(v any) *FindOneAndUpdateOptions {
 	o.o.SetProjection(v)
 	return o
 }
@@ -60,7 +60,7 @@ func (o *FindOneAndUpdateOptions) ReturnDocument(v ReturnDocument) *FindOneAndUp
 	return o
 }
 
-func (o *FindOneAndUpdateOptions) Sort(v interface{}) *FindOneAndUpdateOptions {
+func (o *FindOneAndUpdateOptions) Sort(v any) *FindOneAndUpdateOptions {
 	o.o.SetSort(v)
 	return o
 }
@@ -74,12 +74,12 @@ func (o *FindOneAndUpdateOptions) Upsert(v ...bool) *FindOneAndUpdateOptions {
 	return o
 }
 
-func (o *FindOneAndUpdateOptions) Hint(v interface{}) *FindOneAndUpdateOptions {
+func (o *FindOneAndUpdateOptions) Hint(v any) *FindOneAndUpdateOptions {
 	o.o.SetHint(v)
 	return o
 }
 
-func (o *FindOneAndUpdateOptions) Let(v interface{}) *FindOneAndUpdateOptions {
+func (o *FindOneAndUpdateOptions) Let(v any) *FindOneAndUpdateOptions {
 	o.o.SetLet(v)
 	return o
 }

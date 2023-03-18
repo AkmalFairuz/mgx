@@ -30,7 +30,7 @@ type UpdateResult struct {
 	// UpsertedCount is the number of documents upserted by the operation.
 	UpsertedCount int64
 	// UpsertedID is the _id of the upserted document, or nil if no document was upserted.
-	UpsertedID interface{}
+	UpsertedID any
 }
 
 type DeleteResult struct {
