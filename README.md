@@ -8,7 +8,7 @@ A Golang MongoDB API to simplify the use of MongoDB in your projects.
 go get github.com/akmalfairuz/mgx
 ```
 
-## Usage
+### Example Usage
 
 ```go
 package main
@@ -24,8 +24,12 @@ func main() {
     if err != nil {
         panic(err)
     }
-    db.Collection("users").Insert(mgx.M{
+    r := db.Collection("users").Insert(mgx.M{
         "name": "John Doe",
         "age":  20,
     })
+    if r.Err != nil {
+        panic(r.Err)
+    }
+    fmt.Println(r.InsertedID)
 }
