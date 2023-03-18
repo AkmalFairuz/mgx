@@ -99,8 +99,13 @@ func (c *Collection) FindOneAndReplace(filter, replacement, result any, opt ...*
 	return &SingleResult{Err: r.Err()}
 }
 
-// Insert inserts a single document into the collection.
+// Insert is an alias for InsertOne.
 func (c *Collection) Insert(doc any, opts ...*InsertOneOptions) *InsertResult {
+	return c.InsertOne(doc, opts...)
+}
+
+// InsertOne inserts a single document into the collection.
+func (c *Collection) InsertOne(doc any, opts ...*InsertOneOptions) *InsertResult {
 	var mongoOpts []*options.InsertOneOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
@@ -127,8 +132,13 @@ func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertR
 	}
 }
 
-// Update updates a single document in the collection.
+// Update is an alias for UpdateOne.
 func (c *Collection) Update(filter, update any, opts ...*UpdateOptions) *UpdateResult {
+	return c.UpdateOne(filter, update, opts...)
+}
+
+// UpdateOne updates a single document in the collection.
+func (c *Collection) UpdateOne(filter, update any, opts ...*UpdateOptions) *UpdateResult {
 	var mongoOpts []*options.UpdateOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
@@ -161,8 +171,13 @@ func (c *Collection) UpdateMany(filter, update any, opts ...*options.UpdateOptio
 	}
 }
 
-// Delete deletes a single document from the collection.
+// Delete is an alias for DeleteOne.
 func (c *Collection) Delete(filter any, opts ...*DeleteOptions) *DeleteResult {
+	return c.DeleteOne(filter, opts...)
+}
+
+// DeleteOne deletes a single document from the collection.
+func (c *Collection) DeleteOne(filter any, opts ...*DeleteOptions) *DeleteResult {
 	var mongoOpts []*options.DeleteOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
@@ -189,8 +204,8 @@ func (c *Collection) DeleteMany(filter any, opts ...*options.DeleteOptions) *Del
 	}
 }
 
-// Replace replaces a single document in the collection.
-func (c *Collection) Replace(filter, replacement any, opts ...*ReplaceOptions) *UpdateResult {
+// ReplaceOne replaces a single document in the collection.
+func (c *Collection) ReplaceOne(filter, replacement any, opts ...*ReplaceOptions) *UpdateResult {
 	var mongoOpts []*options.ReplaceOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
