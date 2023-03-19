@@ -40,7 +40,7 @@ func New(uri, database string, ctx ...context.Context) (*Database, error) {
 
 // Collection returns a collection with the given name.
 func (db *Database) Collection(v string, ctx ...context.Context) *Collection {
-	var c context.Context
+	c := context.TODO()
 	if len(ctx) > 0 {
 		c = ctx[0]
 	}
@@ -106,7 +106,11 @@ func (db *Database) IsCollectionExists(v string) bool {
 }
 
 // Close closes the connection to the database.
-func (db *Database) Close() error {
+func (db *Database) Close(ctx ...context.Context) error {
+	c := db.ctx
+	if len(ctx) > 0 {
+		c = ctx[0]
+	}
 	db.db = nil
-	return db.client.Disconnect(nil)
+	return db.client.Disconnect(c)
 }
