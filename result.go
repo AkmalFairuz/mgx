@@ -139,3 +139,11 @@ type DropCollectionResult struct {
 	// Name is the name of the dropped collection.
 	Name string
 }
+
+type ListCollectionsResult struct {
+	// Err is the error that occurred during the operation, if any.
+	Err error
+
+	// Names is the names of the collections returned by the operation.
+	Names []string
+}

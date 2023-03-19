@@ -2,19 +2,27 @@ package mgx
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// MongoX is a wrapper around mongo.Client.
-type MongoX struct {
+// Database ...
+type Database struct {
 	client *mongo.Client
 	db     *mongo.Database
+	ctx    context.Context
 }
 
 // New creates a new MongoX instance.
-func New(uri, database string) (*MongoX, error) {
+func New(uri, database string, ctx ...context.Context) (*Database, error) {
 	// connect to mongodb with uri
+
+	c := context.Background()
+	if len(ctx) > 0 {
+		c = ctx[0]
+	}
+
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
@@ -23,43 +31,82 @@ func New(uri, database string) (*MongoX, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &MongoX{
+	return &Database{
 		client: client,
+		ctx:    c,
 		db:     client.Database(database),
 	}, nil
 }
 
 // Collection returns a collection with the given name.
-func (m *MongoX) Collection(v string, ctx ...context.Context) *Collection {
+func (db *Database) Collection(v string, ctx ...context.Context) *Collection {
 	var c context.Context
 	if len(ctx) > 0 {
 		c = ctx[0]
 	}
 	return &Collection{
-		collection: m.db.Collection(v),
+		collection: db.db.Collection(v),
 		ctx:        c,
 	}
 }
 
 // CreateCollection creates a new collection with the given name.
-func (m *MongoX) CreateCollection(v string, ctx ...context.Context) *CreateCollectionResult {
+func (db *Database) CreateCollection(v string, ctx ...context.Context) *CreateCollectionResult {
 	result := &CreateCollectionResult{}
-	result.Err = m.db.CreateCollection(nil, v)
+	result.Err = db.db.CreateCollection(db.ctx, v)
 	result.Name = v
-	result.Collection = m.Collection(v, ctx...)
+	result.Collection = db.Collection(v, ctx...)
 	return result
 }
 
 // DropCollection drops the collection with the given name.
-func (m *MongoX) DropCollection(v string) *DropCollectionResult {
+func (db *Database) DropCollection(v string) *DropCollectionResult {
 	result := &DropCollectionResult{}
-	result.Err = m.db.Collection(v).Drop(nil)
+	result.Err = db.db.Collection(v).Drop(db.ctx)
 	result.Name = v
 	return result
 }
 
+// ListCollections lists all collections in the database.
+func (db *Database) ListCollections(result, filter any, opts ...*ListCollectionsOptions) *ListCollectionsResult {
+	var mongoOpts []*options.ListCollectionsOptions
+	for _, opt := range opts {
+		mongoOpts = append(mongoOpts, opt.o)
+	}
+	r, err := db.db.ListCollections(db.ctx, filter, mongoOpts...)
+	if err != nil {
+		return &ListCollectionsResult{Err: err}
+	}
+	if err := r.All(db.ctx, result); err != nil {
+		return &ListCollectionsResult{Err: err}
+	}
+	return &ListCollectionsResult{}
+}
+
+// ListCollectionNames lists all collection names in the database.
+func (db *Database) ListCollectionNames(filter any, opts ...*ListCollectionsOptions) *ListCollectionsResult {
+	var mongoOpts []*options.ListCollectionsOptions
+	for _, opt := range opts {
+		mongoOpts = append(mongoOpts, opt.o)
+	}
+	r, err := db.db.ListCollectionNames(db.ctx, filter, mongoOpts...)
+	if err != nil {
+		return &ListCollectionsResult{Err: err}
+	}
+	return &ListCollectionsResult{Names: r}
+}
+
+// IsCollectionExists checks if a collection with the given name exists.
+func (db *Database) IsCollectionExists(v string) bool {
+	r, err := db.db.ListCollectionNames(db.ctx, bson.M{"name": v})
+	if err != nil {
+		return false
+	}
+	return len(r) > 0
+}
+
 // Close closes the connection to the database.
-func (m *MongoX) Close() error {
-	m.db = nil
-	return m.client.Disconnect(nil)
+func (db *Database) Close() error {
+	db.db = nil
+	return db.client.Disconnect(nil)
 }
