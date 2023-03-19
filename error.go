@@ -2,9 +2,24 @@ package mgx
 
 import "go.mongodb.org/mongo-driver/mongo"
 
-// IsErrNotFound returns true if the error is a mongo.ErrNoDocuments.
-func IsErrNotFound(err error) bool {
-	return err == mongo.ErrNoDocuments
+// IsErrNoDocuments returns true if the error is a mongo.ErrNoDocuments.
+func IsErrNoDocuments(err error) bool {
+	return mongo.ErrNoDocuments == err
+}
+
+// IsErrNilDocument ...
+func IsErrNilDocument(err error) bool {
+	return mongo.ErrNilDocument == err
+}
+
+// IsErrNilCursor ...
+func IsErrNilCursor(err error) bool {
+	return mongo.ErrNilCursor == err
+}
+
+// IsErrEmptySlice ...
+func IsErrEmptySlice(err error) bool {
+	return mongo.ErrEmptySlice == err
 }
 
 // IsErrDuplicateKey ...

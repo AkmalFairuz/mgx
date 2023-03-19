@@ -45,6 +45,10 @@ type SingleResult struct {
 	Err error
 }
 
+func (r *SingleResult) IsNotFound() bool {
+	return r.Err == mongo.ErrNoDocuments
+}
+
 type FindResult struct {
 	// Err is the error that occurred during the operation, if any.
 	Err error
