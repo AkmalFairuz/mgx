@@ -19,8 +19,8 @@ func (m IndexModel) mongoIndex() mongo.IndexModel {
 }
 
 // NewIndexModel creates a new IndexModel.
-func NewIndexModel(keys any, options *IndexOptions) *IndexModel {
-	return &IndexModel{
+func NewIndexModel(keys any, options *IndexOptions) IndexModel {
+	return IndexModel{
 		Keys:    keys,
 		Options: options,
 	}
