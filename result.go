@@ -17,7 +17,7 @@ type InsertManyResult struct {
 	// Err is the error that occurred during the operation, if any.
 	Err error
 	// InsertedIDs is the _id fields of the inserted documents, or nil if no documents were inserted.
-	InsertedID []any
+	InsertedIDs []any
 }
 
 type UpdateResult struct {

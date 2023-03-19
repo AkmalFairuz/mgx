@@ -112,24 +112,24 @@ func (c *Collection) InsertOne(doc any, opts ...*InsertOneOptions) *InsertResult
 	}
 
 	result, err := c.collection.InsertOne(c.ctx, doc, mongoOpts...)
-	return &InsertResult{
-		Err:        err,
-		InsertedID: result.InsertedID,
+	if err != nil {
+		return &InsertResult{Err: err}
 	}
+	return &InsertResult{InsertedID: result.InsertedID}
 }
 
 // InsertMany inserts multiple documents into the collection.
-func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertResult {
+func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertManyResult {
 	var mongoOpts []*options.InsertManyOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
 	result, err := c.collection.InsertMany(c.ctx, docs, mongoOpts...)
-	return &InsertResult{
-		Err:        err,
-		InsertedID: result.InsertedIDs,
+	if err != nil {
+		return &InsertManyResult{Err: err}
 	}
+	return &InsertManyResult{InsertedIDs: result.InsertedIDs}
 }
 
 // Update is an alias for UpdateOne.
@@ -145,8 +145,10 @@ func (c *Collection) UpdateOne(filter, update any, opts ...*UpdateOptions) *Upda
 	}
 
 	result, err := c.collection.UpdateOne(c.ctx, filter, update, mongoOpts...)
+	if err != nil {
+		return &UpdateResult{Err: err}
+	}
 	return &UpdateResult{
-		Err:           err,
 		MatchedCount:  result.MatchedCount,
 		ModifiedCount: result.ModifiedCount,
 		UpsertedCount: result.UpsertedCount,
@@ -162,8 +164,10 @@ func (c *Collection) UpdateMany(filter, update any, opts ...*options.UpdateOptio
 	}
 
 	result, err := c.collection.UpdateMany(c.ctx, filter, update, mongoOpts...)
+	if err != nil {
+		return &UpdateResult{Err: err}
+	}
 	return &UpdateResult{
-		Err:           err,
 		MatchedCount:  result.MatchedCount,
 		ModifiedCount: result.ModifiedCount,
 		UpsertedCount: result.UpsertedCount,
@@ -184,10 +188,10 @@ func (c *Collection) DeleteOne(filter any, opts ...*DeleteOptions) *DeleteResult
 	}
 
 	result, err := c.collection.DeleteOne(c.ctx, filter, mongoOpts...)
-	return &DeleteResult{
-		Err:          err,
-		DeletedCount: result.DeletedCount,
+	if err != nil {
+		return &DeleteResult{Err: err}
 	}
+	return &DeleteResult{DeletedCount: result.DeletedCount}
 }
 
 // DeleteMany deletes multiple documents from the collection.
@@ -198,10 +202,10 @@ func (c *Collection) DeleteMany(filter any, opts ...*options.DeleteOptions) *Del
 	}
 
 	result, err := c.collection.DeleteMany(c.ctx, filter, mongoOpts...)
-	return &DeleteResult{
-		Err:          err,
-		DeletedCount: result.DeletedCount,
+	if err != nil {
+		return &DeleteResult{Err: err}
 	}
+	return &DeleteResult{DeletedCount: result.DeletedCount}
 }
 
 // ReplaceOne replaces a single document in the collection.
@@ -212,8 +216,10 @@ func (c *Collection) ReplaceOne(filter, replacement any, opts ...*ReplaceOptions
 	}
 
 	result, err := c.collection.ReplaceOne(c.ctx, filter, replacement, mongoOpts...)
+	if err != nil {
+		return &UpdateResult{Err: err}
+	}
 	return &UpdateResult{
-		Err:           err,
 		MatchedCount:  result.MatchedCount,
 		ModifiedCount: result.ModifiedCount,
 		UpsertedCount: result.UpsertedCount,
@@ -229,10 +235,10 @@ func (c *Collection) Count(filter any, opts ...*CountOptions) *CountResult {
 	}
 
 	result, err := c.collection.CountDocuments(c.ctx, filter, mongoOpts...)
-	return &CountResult{
-		Err:   err,
-		Count: result,
+	if err != nil {
+		return &CountResult{Err: err}
 	}
+	return &CountResult{Count: result}
 }
 
 // Distinct returns a list of distinct values for the given key across a single collection.
@@ -243,10 +249,10 @@ func (c *Collection) Distinct(key string, filter any, opts ...*DistinctOptions) 
 	}
 
 	result, err := c.collection.Distinct(c.ctx, key, filter, mongoOpts...)
-	return &DistinctResult{
-		Err:    err,
-		Result: result,
+	if err != nil {
+		return &DistinctResult{Err: err}
 	}
+	return &DistinctResult{Result: result}
 }
 
 // Aggregate performs an aggregation framework pipeline against the collection.
@@ -274,10 +280,10 @@ func (c *Collection) Watch(pipeline []any, opts ...*WatchOptions) *WatchResult {
 	}
 
 	changeStream, err := c.collection.Watch(c.ctx, pipeline, mongoOpts...)
-	return &WatchResult{
-		Err:          err,
-		changeStream: changeStream,
+	if err != nil {
+		return &WatchResult{Err: err}
 	}
+	return &WatchResult{changeStream: changeStream}
 }
 
 // CreateIndex creates a single index on the collection.
@@ -288,10 +294,10 @@ func (c *Collection) CreateIndex(model IndexModel, opts ...*CreateIndexesOptions
 	}
 
 	result, err := c.collection.Indexes().CreateOne(c.ctx, model.mongoIndex(), mongoOpts...)
-	return &CreateIndexResult{
-		Err:  err,
-		Name: result,
+	if err != nil {
+		return &CreateIndexResult{Err: err}
 	}
+	return &CreateIndexResult{Name: result}
 }
 
 // CreateIndexes creates multiple indexes on the collection.
@@ -307,10 +313,10 @@ func (c *Collection) CreateIndexes(models []IndexModel, opts ...*CreateIndexesOp
 	}
 
 	result, err := c.collection.Indexes().CreateMany(c.ctx, mongoIndexModels, mongoOpts...)
-	return &CreateIndexesResult{
-		Err:   err,
-		Names: result,
+	if err != nil {
+		return &CreateIndexesResult{Err: err}
 	}
+	return &CreateIndexesResult{Names: result}
 }
 
 // ListIndexes lists the indexes on the collection.
@@ -338,10 +344,10 @@ func (c *Collection) DropIndex(name string, opts ...*DropIndexesOptions) *DropIn
 	}
 
 	result, err := c.collection.Indexes().DropOne(c.ctx, name, mongoOpts...)
-	return &DropIndexResult{
-		Err:  err,
-		Name: string(result),
+	if err != nil {
+		return &DropIndexResult{Err: err}
 	}
+	return &DropIndexResult{Name: string(result)}
 }
 
 // DropIndexes drops all indexes from the collection.
@@ -352,12 +358,14 @@ func (c *Collection) DropIndexes(opts ...*DropIndexesOptions) *DropIndexesResult
 	}
 
 	result, err := c.collection.Indexes().DropAll(c.ctx, mongoOpts...)
+	if err != nil {
+		return &DropIndexesResult{Err: err}
+	}
 	var names []string
 	for _, name := range result {
 		names = append(names, string(name))
 	}
 	return &DropIndexesResult{
-		Err:   err,
 		Names: names,
 	}
 }
