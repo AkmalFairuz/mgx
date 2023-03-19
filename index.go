@@ -17,3 +17,11 @@ func (m IndexModel) mongoIndex() mongo.IndexModel {
 		Options: m.Options.opt(),
 	}
 }
+
+// NewIndexModel creates a new IndexModel.
+func NewIndexModel(keys any, options *IndexOptions) *IndexModel {
+	return &IndexModel{
+		Keys:    keys,
+		Options: options,
+	}
+}
