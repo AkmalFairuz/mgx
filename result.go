@@ -17,7 +17,7 @@ type InsertManyResult struct {
 	// Err is the error that occurred during the operation, if any.
 	Err error
 	// InsertedIDs is the _id fields of the inserted documents, or nil if no documents were inserted.
-	InsertedID []any
+	InsertedIDs []any
 }
 
 type UpdateResult struct {
@@ -43,6 +43,10 @@ type DeleteResult struct {
 type SingleResult struct {
 	// Err is the error that occurred during the operation, if any.
 	Err error
+}
+
+func (r *SingleResult) IsNotFound() bool {
+	return r.Err == mongo.ErrNoDocuments
 }
 
 type FindResult struct {
@@ -138,4 +142,12 @@ type DropCollectionResult struct {
 	Err error
 	// Name is the name of the dropped collection.
 	Name string
+}
+
+type ListCollectionsResult struct {
+	// Err is the error that occurred during the operation, if any.
+	Err error
+
+	// Names is the names of the collections returned by the operation.
+	Names []string
 }
