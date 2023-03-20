@@ -124,7 +124,7 @@ func (c *Collection) InsertOne(doc any, opts ...*InsertOneOptions) *InsertResult
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	doc, err := processInsert(doc)
+	doc, err := processInsert(c.collection.Name(), doc)
 	if err != nil {
 		return &InsertResult{Err: err}
 	}
@@ -144,7 +144,7 @@ func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertM
 	}
 
 	for i, doc := range docs {
-		newDoc, err := processInsert(doc)
+		newDoc, err := processInsert(c.collection.Name(), doc)
 		if err != nil {
 			return &InsertManyResult{Err: err}
 		}

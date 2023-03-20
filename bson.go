@@ -64,16 +64,16 @@ func processFilter(filter any) any {
 // IDImpl is an interface for generating IDs.
 // Example case: if you want to generate an auto-incrementing ID, you can implement this interface.
 type IDImpl interface {
-	GenerateID() (any, error)
+	GenerateID(collectionName string) (any, error)
 	ID() any
 	Field() string
 }
 
-func processInsert(doc any) (any, error) {
+func processInsert(collectionName string, doc any) (any, error) {
 	if m, ok := doc.(M); ok {
 		for i, v := range m {
 			if id, ok := v.(IDImpl); ok {
-				generatedID, err := id.GenerateID()
+				generatedID, err := id.GenerateID(collectionName)
 				if err != nil {
 					return nil, err
 				}
