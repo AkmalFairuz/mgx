@@ -146,7 +146,7 @@ func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertM
 	for i, doc := range docs {
 		newDoc, err := processInsert(doc)
 		if err != nil {
-			return &InsertResult{Err: err}
+			return &InsertManyResult{Err: err}
 		}
 		docs[i] = newDoc
 	}
