@@ -27,7 +27,7 @@ func main() {
     r := db.Collection("users").Insert(mgx.M{
         "name": "John Doe",
         "age":  20,
-    }, NewInsertOneOptions().BypassDocumentValidation().Comment("John Doe user"))
+    }, mgx.NewInsertOneOptions().BypassDocumentValidation().Comment("John Doe user"))
     if r.Err != nil {
         panic(r.Err)
     }
