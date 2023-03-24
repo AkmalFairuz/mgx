@@ -21,8 +21,6 @@ func (c *Collection) Get(filter, result any, opts ...*GetOptions) *SingleResult 
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	filter = processFilter(filter)
-
 	r := c.collection.FindOne(c.ctx, filter, mongoOpts...)
 	err := r.Decode(result)
 	if err != nil {
@@ -43,8 +41,6 @@ func (c *Collection) Find(filter, result any, opts ...*FindOptions) *FindResult 
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	filter = processFilter(filter)
-
 	cursor, err := c.collection.Find(c.ctx, filter, mongoOpts...)
 	if err != nil {
 		return &FindResult{Err: err}
@@ -60,15 +56,10 @@ func (c *Collection) Find(filter, result any, opts ...*FindOptions) *FindResult 
 
 // FindOneAndUpdate returns the first document that matches the filter.
 func (c *Collection) FindOneAndUpdate(filter, update, result any, opts ...*FindOneAndUpdateOptions) *SingleResult {
-	update = processUpdate(update)
-
 	var mongoOpts []*options.FindOneAndUpdateOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
-
-	filter = processFilter(filter)
-	update = processUpdate(update)
 
 	r := c.collection.FindOneAndUpdate(c.ctx, filter, update, mongoOpts...)
 	err := r.Decode(result)
@@ -85,8 +76,6 @@ func (c *Collection) FindOneAndDelete(filter, result any, opt ...*FindOneAndDele
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	filter = processFilter(filter)
-
 	r := c.collection.FindOneAndDelete(c.ctx, filter, mongoOpts...)
 	err := r.Decode(result)
 	if err != nil {
@@ -101,8 +90,6 @@ func (c *Collection) FindOneAndReplace(filter, replacement, result any, opt ...*
 	for _, opt := range opt {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
-
-	filter = processFilter(filter)
 
 	r := c.collection.FindOneAndReplace(c.ctx, filter, replacement, mongoOpts...)
 	err := r.Decode(result)
@@ -124,11 +111,6 @@ func (c *Collection) InsertOne(doc any, opts ...*InsertOneOptions) *InsertResult
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	doc, err := processInsert(c.collection.Name(), doc)
-	if err != nil {
-		return &InsertResult{Err: err}
-	}
-
 	result, err := c.collection.InsertOne(c.ctx, doc, mongoOpts...)
 	if err != nil {
 		return &InsertResult{Err: err}
@@ -141,14 +123,6 @@ func (c *Collection) InsertMany(docs []any, opts ...*InsertManyOptions) *InsertM
 	var mongoOpts []*options.InsertManyOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
-	}
-
-	for i, doc := range docs {
-		newDoc, err := processInsert(c.collection.Name(), doc)
-		if err != nil {
-			return &InsertManyResult{Err: err}
-		}
-		docs[i] = newDoc
 	}
 
 	result, err := c.collection.InsertMany(c.ctx, docs, mongoOpts...)
@@ -170,9 +144,6 @@ func (c *Collection) UpdateOne(filter, update any, opts ...*UpdateOptions) *Upda
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	update = processUpdate(update)
-	filter = processFilter(filter)
-
 	result, err := c.collection.UpdateOne(c.ctx, filter, update, mongoOpts...)
 	if err != nil {
 		return &UpdateResult{Err: err}
@@ -191,9 +162,6 @@ func (c *Collection) UpdateMany(filter, update any, opts ...*options.UpdateOptio
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt)
 	}
-
-	update = processUpdate(update)
-	filter = processFilter(filter)
 
 	result, err := c.collection.UpdateMany(c.ctx, filter, update, mongoOpts...)
 	if err != nil {
@@ -219,8 +187,6 @@ func (c *Collection) DeleteOne(filter any, opts ...*DeleteOptions) *DeleteResult
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	filter = processFilter(filter)
-
 	result, err := c.collection.DeleteOne(c.ctx, filter, mongoOpts...)
 	if err != nil {
 		return &DeleteResult{Err: err}
@@ -235,8 +201,6 @@ func (c *Collection) DeleteMany(filter any, opts ...*options.DeleteOptions) *Del
 		mongoOpts = append(mongoOpts, opt)
 	}
 
-	filter = processFilter(filter)
-
 	result, err := c.collection.DeleteMany(c.ctx, filter, mongoOpts...)
 	if err != nil {
 		return &DeleteResult{Err: err}
@@ -250,8 +214,6 @@ func (c *Collection) ReplaceOne(filter, replacement any, opts ...*ReplaceOptions
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
-
-	filter = processFilter(filter)
 
 	result, err := c.collection.ReplaceOne(c.ctx, filter, replacement, mongoOpts...)
 	if err != nil {
@@ -272,8 +234,6 @@ func (c *Collection) Count(filter any, opts ...*CountOptions) *CountResult {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
 
-	filter = processFilter(filter)
-
 	result, err := c.collection.CountDocuments(c.ctx, filter, mongoOpts...)
 	if err != nil {
 		return &CountResult{Err: err}
@@ -287,8 +247,6 @@ func (c *Collection) Distinct(key string, filter any, opts ...*DistinctOptions) 
 	for _, opt := range opts {
 		mongoOpts = append(mongoOpts, opt.opt())
 	}
-
-	filter = processFilter(filter)
 
 	result, err := c.collection.Distinct(c.ctx, key, filter, mongoOpts...)
 	if err != nil {
