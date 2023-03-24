@@ -2,6 +2,7 @@ package mgx
 
 import (
 	"context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -113,4 +114,25 @@ func (db *Database) Close(ctx ...context.Context) error {
 	}
 	db.db = nil
 	return db.client.Disconnect(c)
+}
+
+func (db *Database) WithTransaction(fn func(ctx mongo.SessionContext) (any, error), opt ...*TransactionOptions) (any, error) {
+	var mongoOpt *options.TransactionOptions
+	if len(opt) > 0 {
+		mongoOpt = opt[0].o
+	}
+	session, err := db.client.StartSession()
+	if err != nil {
+		return nil, fmt.Errorf("error start session: %w", err)
+	}
+	defer session.EndSession(db.ctx)
+	return session.WithTransaction(db.ctx, fn, mongoOpt)
+}
+
+func (db *Database) WithContext(ctx context.Context) *Database {
+	return &Database{
+		client: db.client,
+		db:     db.db,
+		ctx:    ctx,
+	}
 }
