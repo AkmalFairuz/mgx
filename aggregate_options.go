@@ -82,8 +82,8 @@ func (o *AggregateOptions) Let(v any) *AggregateOptions {
 }
 
 // Custom specifies options to be added to aggregate expression.
-func (o *AggregateOptions) Custom(v M) *AggregateOptions {
-	o.o.SetCustom(bson.M(v))
+func (o *AggregateOptions) Custom(v bson.M) *AggregateOptions {
+	o.o.SetCustom(v)
 	return o
 }
 

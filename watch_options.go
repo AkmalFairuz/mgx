@@ -102,14 +102,14 @@ func (o *WatchOptions) StartAfter(v any) *WatchOptions {
 }
 
 // Custom ...
-func (o *WatchOptions) Custom(v M) *WatchOptions {
-	o.o.SetCustom(bson.M(v))
+func (o *WatchOptions) Custom(v bson.M) *WatchOptions {
+	o.o.SetCustom(v)
 	return o
 }
 
 // CustomPipeline ...
-func (o *WatchOptions) CustomPipeline(v M) *WatchOptions {
-	o.o.SetCustomPipeline(bson.M(v))
+func (o *WatchOptions) CustomPipeline(v bson.M) *WatchOptions {
+	o.o.SetCustomPipeline(v)
 	return o
 }
 
